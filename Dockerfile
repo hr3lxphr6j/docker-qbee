@@ -7,7 +7,7 @@ ENV CROSS_HOST=${CROSS_HOST}
 ARG QBEE_VERSION=release-4.6.4.10 \
     QBEE_USE_ORIGIN_UA=1 \
     LIBTORRENT_BRANCH=RC_2_0 \
-    UPX_VERSION=4.2.3
+    UPX_VERSION=4.2.4
 
 # add qbitorrent-ee
 RUN --mount=type=cache,target=/usr/src/ \
@@ -36,10 +36,10 @@ FROM --platform=$TARGETPLATFORM ghcr.io/linuxserver/unrar:latest as unrar
 
 FROM --platform=$TARGETPLATFORM ghcr.io/linuxserver/baseimage-alpine:edge
 
-ARG LINUX_SERVER_QB_VERSION=4.6.4-r0-ls322 \
+ARG LINUX_SERVER_QB_VERSION=4.6.4-r1-ls330 \
     QB_MATUI_VERSION=1.16.4 \
     QB_WEB_VERSION=nightly-20230513 \
-    VUE_TORRENT_VERSION=2.7.2
+    VUE_TORRENT_VERSION=2.8.1
 
 # environment settings
 ENV HOME="/config" \
