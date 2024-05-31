@@ -23,7 +23,10 @@ RUN --mount=type=cache,target=/usr/src/ \
         sed -i 's/qBittorrent Enhanced/qBittorrent/g' src/base/bittorrent/sessionimpl.cpp && \
         sed -i 's/#define QBT_VERSION_BUILD [[:digit:]]\+/#define QBT_VERSION_BUILD 0/g' src/base/version.h.in && \
         sed -i 's/LIBTORRENT_BRANCH=".*"/LIBTORRENT_BRANCH="${LIBTORRENT_BRANCH}"/g' .github/workflows/cross_build.sh && \
-        sed -i 's/gcc_64/linux_gcc_64/g' .github/workflows/cross_build.sh && \
+        # static qt version
+        sed -i -e 's/qt_major_ver=".*"/qt_major_ver="6.6"/g' \
+            -e 's/qt_ver=".*"/qt_ver="6.6.3"/g' \
+            .github/workflows/cross_build.sh && \
         .github/workflows/cross_build.sh; \
     else \
         curl -fLo /tmp/qbee.zip \
