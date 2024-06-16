@@ -4,35 +4,34 @@ FROM --platform=linux/amd64 abcfy2/muslcc-toolchain-ubuntu:${CROSS_HOST} as BUIL
 
 ENV CROSS_HOST=${CROSS_HOST}
 
-ARG QBEE_VERSION=release-4.6.4.10 \
-    QBEE_USE_ORIGIN_UA=1 \
+ARG QBEE_VERSION=release-4.6.5.10 \
     LIBTORRENT_BRANCH=RC_2_0 \
     UPX_VERSION=4.2.4
+
+SHELL ["/bin/bash", "-c"] 
 
 # add qbitorrent-ee
 RUN --mount=type=cache,target=/usr/src/ \
     --mount=type=cache,target=/var/cache/apt/ \
     apt-get update && \
-    apt-get -y install git xz-utils curl unzip && \
+    apt-get -y install git xz-utils curl unzip python3-venv && \
     curl -fLo /tmp/upx.tar.xz \
         https://github.com/upx/upx/releases/download/v${UPX_VERSION}/upx-${UPX_VERSION}-$(dpkg --print-architecture)_linux.tar.xz && \
     tar xvf /tmp/upx.tar.xz -C /usr/bin upx-${UPX_VERSION}-$(dpkg --print-architecture)_linux/upx  --strip-components 1 && \    
-    if [ ${QBEE_USE_ORIGIN_UA} = 1 ]; then \
-        git clone -b ${QBEE_VERSION} https://github.com/c0re100/qBittorrent-Enhanced-Edition.git /qbee && \
-        cd /qbee && \
-        sed -i 's/qBittorrent Enhanced/qBittorrent/g' src/base/bittorrent/sessionimpl.cpp && \
-        sed -i 's/#define QBT_VERSION_BUILD [[:digit:]]\+/#define QBT_VERSION_BUILD 0/g' src/base/version.h.in && \
-        sed -i 's/LIBTORRENT_BRANCH=".*"/LIBTORRENT_BRANCH="${LIBTORRENT_BRANCH}"/g' .github/workflows/cross_build.sh && \
-        # static qt version
-        sed -i -e 's/qt_major_ver=".*"/qt_major_ver="6.6"/g' \
-            -e 's/qt_ver=".*"/qt_ver="6.6.3"/g' \
-            .github/workflows/cross_build.sh && \
-        .github/workflows/cross_build.sh; \
-    else \
-        curl -fLo /tmp/qbee.zip \
-            https://github.com/c0re100/qBittorrent-Enhanced-Edition/releases/download/${QBEE_VERSION}/qbittorrent-enhanced-nox_$(uname -m)-linux-musl_static.zip && \
-        unzip /tmp/qbee.zip qbittorrent-nox -d /tmp; \
-    fi && \
+    git clone -b ${QBEE_VERSION} https://github.com/c0re100/qBittorrent-Enhanced-Edition.git /qbee && \
+    cd /qbee && \
+    sed -i 's/qBittorrent Enhanced/qBittorrent/g' src/base/bittorrent/sessionimpl.cpp && \
+    sed -i 's/#define QBT_VERSION_BUILD [[:digit:]]\+/#define QBT_VERSION_BUILD 0/g' src/base/version.h.in && \
+    sed -i 's/LIBTORRENT_BRANCH=".*"/LIBTORRENT_BRANCH="${LIBTORRENT_BRANCH}"/g' .github/workflows/cross_build.sh && \
+    # static qt version
+    sed -i -e 's/qt_major_ver=".*"/qt_major_ver="6.6"/g' \
+        -e 's/qt_ver=".*"/qt_ver="6.6.3"/g' \
+        .github/workflows/cross_build.sh && \
+    # setup venv
+    python3 -m venv /tmp/qbee-build && \
+        source /tmp/qbee-build/bin/activate && \
+        pip install requests semantic_version lxml && \
+    .github/workflows/cross_build.sh; \
     upx /tmp/qbittorrent-nox && \
     chmod +x /tmp/qbittorrent-nox
 
@@ -40,10 +39,10 @@ FROM --platform=$TARGETPLATFORM ghcr.io/linuxserver/unrar:latest as unrar
 
 FROM --platform=$TARGETPLATFORM ghcr.io/linuxserver/baseimage-alpine:edge
 
-ARG LINUX_SERVER_QB_VERSION=4.6.4-r1-ls330 \
+ARG LINUX_SERVER_QB_VERSION=4.6.5-r0-ls335 \
     QB_MATUI_VERSION=1.16.4 \
     QB_WEB_VERSION=nightly-20230513 \
-    VUE_TORRENT_VERSION=2.8.1
+    VUE_TORRENT_VERSION=2.9.0
 
 # environment settings
 ENV HOME="/config" \
