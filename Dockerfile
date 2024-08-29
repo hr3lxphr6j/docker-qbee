@@ -14,7 +14,7 @@ SHELL ["/bin/bash", "-c"]
 RUN --mount=type=cache,target=/usr/src/ \
     --mount=type=cache,target=/var/cache/apt/ \
     apt-get update && \
-    apt-get -y install git xz-utils curl unzip python3-venv && \
+    apt-get -y install git xz-utils curl unzip && \
     curl -fLo /tmp/upx.tar.xz \
         https://github.com/upx/upx/releases/download/v${UPX_VERSION}/upx-${UPX_VERSION}-$(dpkg --print-architecture)_linux.tar.xz && \
     tar xvf /tmp/upx.tar.xz -C /usr/bin upx-${UPX_VERSION}-$(dpkg --print-architecture)_linux/upx  --strip-components 1 && \    
@@ -23,14 +23,6 @@ RUN --mount=type=cache,target=/usr/src/ \
     sed -i 's/qBittorrent Enhanced/qBittorrent/g' src/base/bittorrent/sessionimpl.cpp && \
     sed -i 's/#define QBT_VERSION_BUILD [[:digit:]]\+/#define QBT_VERSION_BUILD 0/g' src/base/version.h.in && \
     sed -i 's/LIBTORRENT_BRANCH=".*"/LIBTORRENT_BRANCH="${LIBTORRENT_BRANCH}"/g' .github/workflows/cross_build.sh && \
-    # static qt version
-    sed -i -e 's/qt_major_ver=".*"/qt_major_ver="6.6"/g' \
-        -e 's/qt_ver=".*"/qt_ver="6.6.3"/g' \
-        .github/workflows/cross_build.sh && \
-    # setup venv
-    python3 -m venv /tmp/qbee-build && \
-        source /tmp/qbee-build/bin/activate && \
-        pip install requests semantic_version lxml && \
     .github/workflows/cross_build.sh; \
     upx /tmp/qbittorrent-nox && \
     chmod +x /tmp/qbittorrent-nox
