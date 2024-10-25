@@ -4,7 +4,7 @@ FROM --platform=linux/amd64 abcfy2/muslcc-toolchain-ubuntu:${CROSS_HOST} as BUIL
 
 ENV CROSS_HOST=${CROSS_HOST}
 
-ARG QBEE_VERSION=release-4.6.7.10 \
+ARG QBEE_VERSION=release-5.0.0.10 \
     LIBTORRENT_BRANCH=RC_2_0 \
     UPX_VERSION=4.2.4
 
@@ -31,10 +31,10 @@ FROM --platform=$TARGETPLATFORM ghcr.io/linuxserver/unrar:latest as unrar
 
 FROM --platform=$TARGETPLATFORM ghcr.io/linuxserver/baseimage-alpine:edge
 
-ARG LINUX_SERVER_QB_VERSION=4.6.7-r0-ls353 \
+ARG LINUX_SERVER_QB_VERSION=5.0.0-r2-ls360 \
     QB_MATUI_VERSION=1.16.4 \
     QB_WEB_VERSION=nightly-20230513 \
-    VUE_TORRENT_VERSION=2.14.0
+    VUE_TORRENT_VERSION=2.15.0
 
 # environment settings
 ENV HOME="/config" \
@@ -44,6 +44,7 @@ ENV HOME="/config" \
 # install runtime packages and qbitorrent-cli
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories && \
     apk add --no-cache \
+        grep \
         icu-libs \
         p7zip \
         python3 \
