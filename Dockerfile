@@ -4,9 +4,9 @@ FROM --platform=linux/amd64 abcfy2/muslcc-toolchain-ubuntu:${CROSS_HOST} as BUIL
 
 ENV CROSS_HOST=${CROSS_HOST}
 
-ARG QBEE_VERSION=release-5.0.3.10 \
+ARG QBEE_VERSION=release-5.0.4.10 \
     LIBTORRENT_BRANCH=RC_2_0 \
-    UPX_VERSION=4.2.4
+    UPX_VERSION=5.0.0
 
 SHELL ["/bin/bash", "-c"] 
 
@@ -31,10 +31,10 @@ FROM --platform=$TARGETPLATFORM ghcr.io/linuxserver/unrar:latest as unrar
 
 FROM --platform=$TARGETPLATFORM ghcr.io/linuxserver/baseimage-alpine:edge
 
-ARG LINUX_SERVER_QB_VERSION=5.0.3-r0-ls369 \
+ARG LINUX_SERVER_QB_VERSION=5.0.4-r0-ls384 \
     QB_MATUI_VERSION=1.16.4 \
     QB_WEB_VERSION=nightly-20230513 \
-    VUE_TORRENT_VERSION=2.19.0
+    VUE_TORRENT_VERSION=2.23.0
 
 # environment settings
 ENV HOME="/config" \
